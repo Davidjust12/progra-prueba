@@ -11,6 +11,6 @@ package com.mycompany.ventas;
 public class Ventas {
 
     public static void main(String[] args) {
-        System.out.println("PRUEBA ");
+        System.out.println("PRUEBA DE  ");
     }
 }
