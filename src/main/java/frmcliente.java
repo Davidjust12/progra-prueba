@@ -5,6 +5,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import java.util.InputMismatchException;
 import java.util.List;
+import java.util.Random;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.UUID;
@@ -12,6 +13,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Query;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
@@ -72,6 +74,7 @@ public class frmcliente extends javax.swing.JFrame {
         btnsalir = new javax.swing.JButton();
         btneditar = new javax.swing.JButton();
         btnnuevo = new javax.swing.JButton();
+        btnlimpiar = new javax.swing.JButton();
         jLabel8 = new javax.swing.JLabel();
         txtbuscar = new javax.swing.JTextField();
         btnbuscar = new javax.swing.JButton();
@@ -159,13 +162,21 @@ public class frmcliente extends javax.swing.JFrame {
             }
         });
 
+        btnlimpiar.setText("Limpiar");
+        btnlimpiar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnlimpiarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+            .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(19, 19, 19)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(btnsalir, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 73, Short.MAX_VALUE)
@@ -175,7 +186,9 @@ public class frmcliente extends javax.swing.JFrame {
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addComponent(txtapellido, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 167, Short.MAX_VALUE)
                             .addComponent(txtnombre, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtidcliente))
+                            .addComponent(txtidcliente))))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(42, 42, 42)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(jPanel2Layout.createSequentialGroup()
@@ -189,23 +202,24 @@ public class frmcliente extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addComponent(txttelefono, javax.swing.GroupLayout.DEFAULT_SIZE, 95, Short.MAX_VALUE)
-                                    .addComponent(txtnit)))))
+                                    .addComponent(txtnit))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 94, Short.MAX_VALUE)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(btneliminar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(btneditar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(btnguardar))
+                            .addComponent(btnnuevo, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(28, 28, 28))
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(btnsalir, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(115, 115, 115)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 42, Short.MAX_VALUE)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(btneliminar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btneditar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnguardar))
-                    .addComponent(btnnuevo, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(28, 28, 28))
+                        .addGap(66, 66, 66)
+                        .addComponent(btnlimpiar)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
             .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel2Layout.createSequentialGroup()
                     .addGap(118, 118, 118)
                     .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(358, Short.MAX_VALUE)))
+                    .addContainerGap(411, Short.MAX_VALUE)))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -242,13 +256,15 @@ public class frmcliente extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(btneditar)
                 .addGap(18, 18, 18)
-                .addComponent(btnsalir)
-                .addContainerGap(34, Short.MAX_VALUE))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnsalir)
+                    .addComponent(btnlimpiar))
+                .addContainerGap(76, Short.MAX_VALUE))
             .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel2Layout.createSequentialGroup()
                     .addGap(111, 111, 111)
                     .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 0, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(136, Short.MAX_VALUE)))
+                    .addContainerGap(184, Short.MAX_VALUE)))
         );
 
         jLabel8.setText("Buscar por ID");
@@ -263,13 +279,13 @@ public class frmcliente extends javax.swing.JFrame {
 
         tablalistado.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "Id cliente", "Nombre", "Apellido", "NIT", "Telefono", "Direccion"
             }
         ));
         jScrollPane2.setViewportView(tablalistado);
@@ -281,33 +297,33 @@ public class frmcliente extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(60, 60, 60)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(76, 76, 76)
                         .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(28, 28, 28)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(txtbuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(120, 120, 120)
-                                .addComponent(btnbuscar))
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 412, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(158, Short.MAX_VALUE))
+                        .addComponent(txtbuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(120, 120, 120)
+                        .addComponent(btnbuscar))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(31, 31, 31)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(123, 123, 123)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 512, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(135, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(83, 83, 83)
+                .addGap(41, 41, 41)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel8)
                     .addComponent(txtbuscar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnbuscar))
-                .addGap(41, 41, 41)
+                .addGap(38, 38, 38)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(76, Short.MAX_VALUE))
+                .addContainerGap(79, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -315,16 +331,14 @@ public class frmcliente extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(10, Short.MAX_VALUE)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addGap(0, 16, Short.MAX_VALUE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(111, Short.MAX_VALUE))
+                .addGap(0, 117, Short.MAX_VALUE))
         );
 
         pack();
@@ -377,6 +391,7 @@ private int getNextClientId() {
        
                                                                                                                                                 
 
+                                         
     try {
         // Leer datos de los cuadros de texto
         String idCliente = txtidcliente.getText().trim();
@@ -386,39 +401,42 @@ private int getNextClientId() {
         String telefono = txttelefono.getText().trim();
         String direccion = txtdireccion.getText().trim();
 
-        // Verificar si el idCliente es un número válido
-       
-
-        // Imprimir los valores para depuración
-        System.out.println("ID Cliente: " + idCliente);
-        System.out.println("Nombre: " + nombre);
-        System.out.println("Apellido: " + apellido);
-        System.out.println("NIT: " + nitStr);
-        System.out.println("Teléfono: " + telefono);
-        System.out.println("Dirección: " + direccion);
-
-        // Crear el nuevo cliente
-        Cliente nuevoCliente = new Cliente();
-        if (idCliente != null) {
-            nuevoCliente.setIdcliente(idCliente); 
+        // Verificar si el ID es un número válido
+        if (idCliente.isEmpty() || nombre.isEmpty() || apellido.isEmpty() || nitStr.isEmpty() || telefono.isEmpty() || direccion.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Todos los campos son obligatorios.");
+            return;
         }
-        nuevoCliente.setNombre(nombre);
-        nuevoCliente.setApellido(apellido);
 
+        // Convertir NIT a entero
+        Integer nit;
         try {
-            nuevoCliente.setNit(Integer.parseInt(nitStr));
+            nit = Integer.parseInt(nitStr);
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this, "El NIT debe ser un número entero.");
             return;
         }
 
+        // Crear el nuevo cliente
+        Cliente nuevoCliente = new Cliente();
+        nuevoCliente.setIdcliente(idCliente);
+        nuevoCliente.setNombre(nombre);
+        nuevoCliente.setApellido(apellido);
+        nuevoCliente.setNit(nit);
         nuevoCliente.setTelefono(telefono);
         nuevoCliente.setDireccion(direccion);
 
-        // Guardar el cliente en la base de datos
+        // Obtener el EntityManager y verificar si el cliente ya existe
         EntityManager em = clienteController.getEntityManager();
         EntityTransaction tx = em.getTransaction();
         try {
+            // Verificar si el cliente ya existe en la base de datos
+            Cliente clienteExistente = em.find(Cliente.class, idCliente);
+            if (clienteExistente != null) {
+                JOptionPane.showMessageDialog(this, "Ya existe un cliente con el ID proporcionado.");
+                return;
+            }
+
+            // Guardar el cliente en la base de datos
             tx.begin();
             clienteController.create(nuevoCliente);
             tx.commit();
@@ -443,7 +461,7 @@ private int getNextClientId() {
         }
     } catch (Exception e) {
         System.out.println("Error al guardar el cliente: " + e.getMessage());
-        e.printStackTrace(); // Esto imprimirá el stack trace del error
+        e.printStackTrace();
         JOptionPane.showMessageDialog(this, "Error al guardar el cliente: " + e.getMessage());
     }
 
@@ -499,13 +517,68 @@ private int getNextClientId() {
 
     private void txtbuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtbuscarActionPerformed
 
+ 
+    // Obtener el ID del cliente desde el campo de texto txtbuscar
+    String idCliente = txtbuscar.getText().trim();
     
+    if (idCliente.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Por favor ingrese el ID del cliente.");
+        return;
+    }
+
+    // Crear el EntityManagerFactory utilizando el nombre de tu unidad de persistencia
+    EntityManagerFactory emf = javax.persistence.Persistence.createEntityManagerFactory("CapaLogica_ventas_jar_1.0-SNAPSHOTPU");
+
+    try {
+        // Crear una instancia del controlador de cliente con el EntityManagerFactory
+        ClienteJpaController clienteController = new ClienteJpaController(emf);
+
+        // Buscar el cliente por su ID
+        Cliente cliente = clienteController.findCliente(idCliente);
+
+        if (cliente != null) {
+            // Limpiar la tabla antes de agregar el cliente
+            DefaultTableModel model = (DefaultTableModel) tablalistado.getModel();
+            model.setRowCount(0); // Limpiar las filas actuales
+
+            // Agregar la información del cliente a la tabla
+            model.addRow(new Object[]{
+                cliente.getIdcliente(),
+                cliente.getNombre(),
+                cliente.getApellido(),
+                cliente.getNit(),
+                cliente.getTelefono(),
+                cliente.getDireccion()
+            });
+        } else {
+            JOptionPane.showMessageDialog(this, "Cliente no encontrado.");
+        }
+
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Error al buscar el cliente: " + e.getMessage());
+        e.printStackTrace();
+    } finally {
+        // Asegurarse de cerrar el EntityManagerFactory
+        if (emf != null) {
+            emf.close();
+        }
+    }
+
+
 
 
     }//GEN-LAST:event_txtbuscarActionPerformed
 
     private void btnsalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnsalirActionPerformed
-        // TODO add your handling code here:
+                                               
+    // Confirmar si el usuario realmente quiere salir
+    int confirm = JOptionPane.showConfirmDialog(this, "¿Estás seguro de que quieres salir?", "Confirmar salida", JOptionPane.YES_NO_OPTION);
+    if (confirm == JOptionPane.YES_OPTION) {
+        // Cerrar la ventana actual
+        this.dispose();
+    }
+
+
     }//GEN-LAST:event_btnsalirActionPerformed
 
     private void btneditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btneditarActionPerformed
@@ -576,28 +649,35 @@ private int getNextClientId() {
     }//GEN-LAST:event_btneditarActionPerformed
 
     private void btnnuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnnuevoActionPerformed
-  
-    EntityManager em = clienteController.getEntityManager();
-    try {
-        // Buscar el ID máximo actual como String
-        Query query = em.createQuery("SELECT MAX(c.idcliente) FROM Cliente c");
-        String maxIdStr = (String) query.getSingleResult();
+ 
 
-        // Si no hay IDs existentes, iniciar con 1
-        if (maxIdStr == null) {
-        } else {
-            // Convertir el ID máximo a Integer y aumentar en 1
-            int maxId = Integer.parseInt(maxIdStr);
-        }
-    } catch (NumberFormatException e) {
-        // Manejo de excepción si el ID no puede ser convertido a Integer
-        System.out.println("Error al convertir el ID máximo a Integer: " + e.getMessage());
-    } finally {
-        em.close();
-    }
+
+// Dentro del ActionListener del botón "Nuevo" {
+    // Generar un código de cliente aleatorio de 4 dígitos
+    Random random = new Random();
+    int randomId = 1000 + random.nextInt(9000); // Genera un número entre 1000 y 9999
+
+    // Establecer el ID generado en el campo de texto correspondiente
+    txtidcliente.setText(String.valueOf(randomId));
+
 
 
     }//GEN-LAST:event_btnnuevoActionPerformed
+
+    private void btnlimpiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnlimpiarActionPerformed
+    // Dentro del ActionListener del botón "Limpiar"
+    // Limpiar los campos de texto
+    txtidcliente.setText(""); // Limpiar el campo del ID de cliente
+    txtnombre.setText("");
+    txtapellido.setText("");
+    txtnit.setText("");
+    txttelefono.setText("");
+    txtdireccion.setText("");
+    
+    // Si tienes otros campos, agrégalos aquí también
+
+
+    }//GEN-LAST:event_btnlimpiarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -639,6 +719,7 @@ private int getNextClientId() {
     private javax.swing.JButton btneditar;
     private javax.swing.JButton btneliminar;
     private javax.swing.JButton btnguardar;
+    private javax.swing.JButton btnlimpiar;
     private javax.swing.JButton btnnuevo;
     private javax.swing.JButton btnsalir;
     private javax.swing.JLabel jLabel1;
