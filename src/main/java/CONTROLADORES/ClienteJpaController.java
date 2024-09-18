@@ -19,26 +19,40 @@ public class ClienteJpaController {
         this.emf = emf;
     }
 
-    protected EntityManager getEntityManager() {
+    public EntityManager getEntityManager() {
         return emf.createEntityManager();
     }
 
     public void create(Cliente cliente) {
-        EntityManager em = getEntityManager();
-        EntityTransaction tx = em.getTransaction();
-        try {
-            tx.begin();
-            em.persist(cliente);
-            tx.commit();
-        } catch (Exception e) {
-            if (tx.isActive()) {
-                tx.rollback();
-            }
-            e.printStackTrace();
-        } finally {
-            em.close();
+    EntityManager em = getEntityManager();
+    EntityTransaction tx = em.getTransaction();
+    try {
+        System.out.println("Iniciando transacción para guardar el cliente");
+        tx.begin();
+        em.persist(cliente);
+        tx.commit();
+        System.out.println("Cliente guardado con éxito");
+    } catch (Exception e) {
+        if (tx.isActive()) {
+            tx.rollback();
         }
+        System.out.println("Error al guardar el cliente: " + e.getMessage());
+        e.printStackTrace();
+    } finally {
+        em.close();
     }
+
+
+    }
+    public Cliente findCliente(String id) {
+    EntityManager em = getEntityManager();
+    try {
+        return em.find(Cliente.class, id);
+    } finally {
+        em.close();
+    }
+}
+
 
     public void edit(Cliente cliente) {
         EntityManager em = getEntityManager();
@@ -73,6 +87,29 @@ public class ClienteJpaController {
             em.close();
         }
     }
+public void delete(String id) {
+    EntityManager em = getEntityManager();
+    EntityTransaction tx = em.getTransaction();
+    try {
+        tx.begin();
+        Cliente cliente = em.find(Cliente.class, id);
+        if (cliente != null) {
+            em.remove(cliente);
+            tx.commit();
+            System.out.println("Cliente eliminado con éxito.");
+        } else {
+            System.out.println("Cliente no encontrado.");
+        }
+    } catch (Exception e) {
+        if (tx.isActive()) {
+            tx.rollback();
+        }
+        System.out.println("Error al eliminar el cliente: " + e.getMessage());
+        e.printStackTrace();
+    } finally {
+        em.close();
+    }
+}
 
     public Cliente find(Object id) {
         EntityManager em = getEntityManager();
