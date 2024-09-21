@@ -11,6 +11,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 public class EmpleadosJpaController implements Serializable {
@@ -65,6 +66,17 @@ public class EmpleadosJpaController implements Serializable {
             }
         }
     }
+    public int getSiguienteIdEmpleado() {
+    EntityManager em = getEntityManager();
+    try {
+        Query query = em.createQuery("SELECT MAX(e.idempleado) FROM Empleados e");
+        Integer maxId = (Integer) query.getSingleResult();
+        return (maxId == null) ? 1 : maxId + 1; // Devuelve 1 si no hay empleados
+    } finally {
+        em.close();
+    }
+}
+
 
     public void destroy(String id) throws Exception {
         EntityManager em = null;

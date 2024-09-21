@@ -1,6 +1,8 @@
 
 import CapaLogica_ventas.Cliente;
+import CapaLogica_ventas.Producto;
 import controladores.ClienteJpaController;
+import controladores.ProductoJpaController;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import java.util.InputMismatchException;
@@ -276,6 +278,11 @@ public class frmcliente extends javax.swing.JFrame {
         });
 
         btnbuscar.setText("Buscar");
+        btnbuscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnbuscarActionPerformed(evt);
+            }
+        });
 
         tablalistado.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -678,6 +685,69 @@ private int getNextClientId() {
 
 
     }//GEN-LAST:event_btnlimpiarActionPerformed
+
+    private void btnbuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnbuscarActionPerformed
+      
+ 
+    // Obtener el ID del producto desde el campo de texto txtbuscar
+    String idProductoStr = txtbuscar.getText().trim();
+
+    if (idProductoStr.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Por favor ingrese el ID del producto.");
+        return;
+    }
+
+    // Verificar que el ID ingresado sea un número
+    if (!idProductoStr.matches("\\d+")) {
+        JOptionPane.showMessageDialog(this, "El ID del producto debe ser un número.");
+        return;
+    }
+
+    // Crear el EntityManagerFactory utilizando el nombre de tu unidad de persistencia
+    EntityManagerFactory emf = javax.persistence.Persistence.createEntityManagerFactory("CapaLogica_ventas_jar_1.0-SNAPSHOTPU");
+
+    try {
+        // Crear una instancia del controlador de producto con el EntityManagerFactory
+        ProductoJpaController productoController = new ProductoJpaController(emf);
+
+        // Convertir el ID del producto a String, suponiendo que el ID es de tipo String
+        String idProducto = idProductoStr;
+
+        // Buscar el producto por su ID
+        Producto producto = productoController.findProducto(idProducto);
+
+        if (producto != null) {
+            // Limpiar la tabla antes de agregar el producto
+            DefaultTableModel model = (DefaultTableModel) tablalistado.getModel();
+            model.setRowCount(0); // Limpiar las filas actuales
+
+            // Agregar la información del producto a la tabla
+            model.addRow(new Object[]{
+                producto.getIdproducto(),
+                producto.getSerie(),
+                producto.getNombre(),
+                producto.getPrecCompra(),
+                producto.getPrecVenta(),
+                producto.getIdcategoria() // Asegúrate de que este método devuelva lo que necesitas
+            });
+        } else {
+            JOptionPane.showMessageDialog(this, "Producto no encontrado.");
+        }
+
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Error al buscar el producto: " + e.getMessage());
+        e.printStackTrace();
+    } finally {
+        // Asegurarse de cerrar el EntityManagerFactory
+        if (emf != null) {
+            emf.close();
+        }
+    }
+
+
+
+
+    }//GEN-LAST:event_btnbuscarActionPerformed
 
     /**
      * @param args the command line arguments

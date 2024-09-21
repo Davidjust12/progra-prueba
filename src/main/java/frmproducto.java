@@ -1,13 +1,18 @@
 
 import CapaLogica_ventas.Categoria;
 import CapaLogica_ventas.Producto;
+import controladores.CategoriaJpaController;
 import controladores.ProductoJpaController;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.math.BigDecimal;
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.TypedQuery;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -20,12 +25,59 @@ import javax.swing.JOptionPane;
  */
 public class frmproducto extends javax.swing.JFrame {
 
-    /**
-     * Creates new form frmproducto
-     */
-    public frmproducto() {
-        initComponents();
+   private EntityManagerFactory emf; // Atributo para almacenar el EntityManagerFactory
+
+public frmproducto(EntityManagerFactory emf) {
+    initComponents();
+     jTextField1.setEditable(false);
+    txtidcategoria.addFocusListener(new FocusAdapter() {
+        public void focusLost(FocusEvent e) {
+            String idCategoriaStr = txtidcategoria.getText().trim();
+            Categoria categoria = buscarCategoriaPorId(idCategoriaStr);
+            if (categoria != null) {
+                jTextField1.setText(categoria.getDescrpcion()); // Asegúrate de usar el método correcto
+            } else {
+                jTextField1.setText(""); // Limpia el campo si no se encuentra la categoría
+            }
+        }
+    });
+    this.emf = emf; // Asignar el EntityManagerFactory
+}
+    
+   private Categoria buscarCategoriaPorId(String idCategoriaStr) {
+    try {
+        int idCategoria = Integer.parseInt(idCategoriaStr);
+        CategoriaJpaController categoriaController = new CategoriaJpaController(emf);
+        Categoria categoria = categoriaController.findCategoria(idCategoria);
+        
+        if (categoria != null) {
+            jTextField1.setText(categoria.getDescrpcion()); // Actualiza el JTextField con la descripción
+        } else {
+            jTextField1.setText(""); // Limpia el JTextField si no se encuentra la categoría
+        }
+        
+        return categoria;
+    } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(this, "ID de categoría inválido: " + e.getMessage());
+        jTextField1.setText(""); // Limpia el JTextField
+        return null;
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Error al buscar la categoría: " + e.getMessage());
+        jTextField1.setText(""); // Limpia el JTextField
+        return null;
     }
+}
+
+    private String generarNuevoIdProducto() {
+        return String.valueOf(obtenerSiguienteIdProducto()); // Cambia esto según tu implementación
+    }
+
+    private int obtenerSiguienteIdProducto() {
+        // Implementa la lógica para obtener el siguiente ID de producto
+        // Por ejemplo, consulta a la base de datos para obtener el último ID y sumar uno
+        return 1; // Cambia esto por la lógica real
+    }
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -50,7 +102,6 @@ public class frmproducto extends javax.swing.JFrame {
         txtpreciocompra = new javax.swing.JTextField();
         txtprecioventa = new javax.swing.JTextField();
         txtidcategoria = new javax.swing.JTextField();
-        cbocategoria = new javax.swing.JComboBox<>();
         jLabel9 = new javax.swing.JLabel();
         btnnuevo = new javax.swing.JButton();
         btnguardar = new javax.swing.JButton();
@@ -60,6 +111,7 @@ public class frmproducto extends javax.swing.JFrame {
         btnsalir = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tablalistado = new javax.swing.JTable();
+        jTextField1 = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -90,12 +142,6 @@ public class frmproducto extends javax.swing.JFrame {
             }
         });
 
-        cbocategoria.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cbocategoriaActionPerformed(evt);
-            }
-        });
-
         jLabel9.setText("Buscar por Nombre");
 
         btnnuevo.setText("Nuevo");
@@ -113,8 +159,18 @@ public class frmproducto extends javax.swing.JFrame {
         });
 
         btneliminar.setText("Eliminar");
+        btneliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btneliminarActionPerformed(evt);
+            }
+        });
 
         btnbuscar.setText("Buscar ");
+        btnbuscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnbuscarActionPerformed(evt);
+            }
+        });
 
         btnsalir.setText("Salir");
         btnsalir.addActionListener(new java.awt.event.ActionListener() {
@@ -125,21 +181,27 @@ public class frmproducto extends javax.swing.JFrame {
 
         tablalistado.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "id producto", "Serie", "nombre", "Precio compra", "Precio venta", "Cantidad", "id categoria"
             }
         ));
         jScrollPane1.setViewportView(tablalistado);
+
+        jTextField1.setText("........");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 184, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(260, 260, 260))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -174,33 +236,26 @@ public class frmproducto extends javax.swing.JFrame {
                                 .addGap(24, 24, 24)))
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                        .addComponent(txtpreciocompra, javax.swing.GroupLayout.DEFAULT_SIZE, 126, Short.MAX_VALUE)
-                                        .addComponent(txtprecioventa))
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addComponent(txtidcategoria, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(37, 37, 37)
-                                        .addComponent(cbocategoria, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addGap(41, 41, 41)
+                                .addGap(23, 23, 23)
+                                .addComponent(btnbuscar)
+                                .addGap(45, 45, 45)
+                                .addComponent(btnsalir, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addComponent(jTextField1, javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(txtpreciocompra, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 126, Short.MAX_VALUE)
+                                    .addComponent(txtprecioventa, javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(txtidcategoria, javax.swing.GroupLayout.Alignment.LEADING))
+                                .addGap(76, 76, 76)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                         .addComponent(btnguardar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(btnnuevo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                    .addComponent(btneliminar)))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(23, 23, 23)
-                                .addComponent(btnbuscar)
-                                .addGap(45, 45, 45)
-                                .addComponent(btnsalir, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                    .addComponent(btneliminar)))))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(49, 49, 49)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 568, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 641, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(37, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 184, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(260, 260, 260))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -231,9 +286,10 @@ public class frmproducto extends javax.swing.JFrame {
                             .addComponent(jLabel4)
                             .addComponent(txtproducto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel7)
-                            .addComponent(cbocategoria, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtidcategoria, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(29, 29, 29)
+                        .addGap(1, 1, 1)
+                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                 .addComponent(txtbuscar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -279,8 +335,25 @@ public class frmproducto extends javax.swing.JFrame {
     }//GEN-LAST:event_txtpreciocompraActionPerformed
 
     private void btnnuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnnuevoActionPerformed
-                                        
-  
+              
+ 
+    try {
+        // Generar un nuevo ID de producto (ajusta esto según tu lógica)
+        // Por ejemplo, puedes usar un método que obtenga el próximo ID disponible
+        String nuevoIdProducto = generarNuevoIdProducto(); // Método que debes implementar
+        txtidproducto.setText(nuevoIdProducto); // Establece el nuevo ID
+        txtserie.setText("");
+        txtproducto.setText("");
+        txtpreciocompra.setText("");
+        txtprecioventa.setText("");
+        txtidcategoria.setText(""); // Limpia el campo de ID de categoría
+        // cbocategoria.setSelectedIndex(0); // No necesario si no utilizas JComboBox
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+        e.printStackTrace();
+    }
+
+
 
 
 
@@ -289,88 +362,159 @@ public class frmproducto extends javax.swing.JFrame {
     private void btnguardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnguardarActionPerformed
 
     // Leer datos de los cuadros de texto
-    String idproducto = txtidproducto.getText().trim();
-    String serie = txtserie.getText().trim();
-    String nombre = txtproducto.getText().trim();
-    String precCompraStr = txtpreciocompra.getText().trim();  // Guardar como String primero
-    String precVentaStr = txtprecioventa.getText().trim();    // Guardar como String primero
-    
+        String idproducto = txtidproducto.getText().trim();
+        String serie = txtserie.getText().trim();
+        String nombre = txtproducto.getText().trim();
+        String precCompraStr = txtpreciocompra.getText().trim();
+        String precVentaStr = txtprecioventa.getText().trim();
+        String idCategoriaStr = txtidcategoria.getText().trim(); // Leer ID de categoría
 
-    // Validar y convertir precios y cantidad
-    BigDecimal precCompra = null;
-    BigDecimal precVenta = null;
-   
+        // Validar y convertir precios
+        BigDecimal precCompra = null;
+        BigDecimal precVenta = null;
 
-    try {
-        if (!precCompraStr.isEmpty()) {
-            precCompra = new BigDecimal(precCompraStr);
+        try {
+            if (!precCompraStr.isEmpty()) {
+                precCompra = new BigDecimal(precCompraStr);
+            }
+            if (!precVentaStr.isEmpty()) {
+                precVenta = new BigDecimal(precVentaStr);
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Error en los datos numéricos: " + e.getMessage());
+            return;
         }
-        if (!precVentaStr.isEmpty()) {
-            precVenta = new BigDecimal(precVentaStr);
+
+        // Buscar la categoría por ID
+        Categoria categoriaSeleccionada = buscarCategoriaPorId(idCategoriaStr);
+        if (categoriaSeleccionada == null) {
+            JOptionPane.showMessageDialog(this, "La categoría con ID " + idCategoriaStr + " no existe.");
+            return;
         }
-        
-    } catch (NumberFormatException e) {
-        JOptionPane.showMessageDialog(this, "Error en los datos numéricos: " + e.getMessage());
-        return; // Salir del método si hay un error
-    }
 
-    // Crear el nuevo producto
-    Producto nuevoProducto = new Producto();
-    nuevoProducto.setIdproducto(idproducto);
-    nuevoProducto.setSerie(serie);
-    nuevoProducto.setNombre(nombre);
-    nuevoProducto.setPrecCompra(precCompra);
-    nuevoProducto.setPrecVenta(precVenta);
+        // Crear el nuevo producto
+        Producto nuevoProducto = new Producto();
+        nuevoProducto.setIdproducto(idproducto);
+        nuevoProducto.setSerie(serie);
+        nuevoProducto.setNombre(nombre);
+        nuevoProducto.setPrecCompra(precCompra);
+        nuevoProducto.setPrecVenta(precVenta);
+        nuevoProducto.setIdcategoria(categoriaSeleccionada); // Asignar la categoría encontrada
+
+        // Guardar el producto en la base de datos
+        ProductoJpaController productoController = new ProductoJpaController(emf);
+
+        try {
+            productoController.create(nuevoProducto);
+            JOptionPane.showMessageDialog(this, "Producto guardado con éxito");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error al guardar el producto: " + e.getMessage());
+            e.printStackTrace();
+        }
     
-
-    // Establecer la categoría seleccionada
-    Categoria categoriaSeleccionada = (Categoria) cbocategoria.getSelectedItem();
-    nuevoProducto.setIdcategoria(categoriaSeleccionada);
-
-    // Guardar el producto en la base de datos utilizando el controlador JPA
-    ProductoJpaController productoController = new ProductoJpaController();
     
-    try {
-        productoController.create(nuevoProducto);
-        JOptionPane.showMessageDialog(this, "Producto guardado con éxito");
-    } catch (Exception e) {
-        JOptionPane.showMessageDialog(this, "Error al guardar el producto: " + e.getMessage());
-        e.printStackTrace();
-    }
-
 
     }//GEN-LAST:event_btnguardarActionPerformed
 
     private void btnsalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnsalirActionPerformed
-        // TODO add your handling code here:
+          dispose(); // Cierra el formulario
     }//GEN-LAST:event_btnsalirActionPerformed
-
-    private void cbocategoriaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbocategoriaActionPerformed
-                                                 
-                                               
-   
-    // Obtener la categoría seleccionada del JComboBox
-    Categoria selectedCategory = (Categoria) cbocategoria.getSelectedItem();
-    
-    // Verificar si se seleccionó una categoría válida
-    if (selectedCategory != null) {
-        // Mostrar la descripción de la categoría en el JTextField
-        txtidcategoria.setText(selectedCategory.getDescrpcion());
-    } else {
-        // Limpiar el JTextField si no hay categoría seleccionada
-        txtidcategoria.setText("");
-    }
-
-
-
-
-
-
-    }//GEN-LAST:event_cbocategoriaActionPerformed
 
     private void txtidcategoriaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtidcategoriaActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtidcategoriaActionPerformed
+
+    private void btneliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btneliminarActionPerformed
+        String idproducto = txtidproducto.getText().trim();
+
+    if (idproducto.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Por favor, ingresa el ID del producto a eliminar.");
+        return;
+    }
+
+    // Confirmar la eliminación
+    int confirm = JOptionPane.showConfirmDialog(this, "¿Estás seguro de que deseas eliminar el producto con ID " + idproducto + "?", "Confirmar Eliminación", JOptionPane.YES_NO_OPTION);
+    
+    if (confirm == JOptionPane.YES_OPTION) {
+        ProductoJpaController productoController = new ProductoJpaController(emf);
+
+        try {
+            // Llamar al método de eliminación en el JPA Controller
+            productoController.destroy((idproducto));
+            JOptionPane.showMessageDialog(this, "Producto eliminado con éxito.");
+            limpiarCampos(); // Opcional: Limpia los campos después de eliminar
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error al eliminar el producto: " + e.getMessage());
+        }
+    }
+}
+
+// Método para limpiar los campos
+private void limpiarCampos() {
+    txtidproducto.setText("");
+    txtserie.setText("");
+    txtproducto.setText("");
+    txtpreciocompra.setText("");
+    txtprecioventa.setText("");
+    txtidcategoria.setText("");
+    
+
+    }//GEN-LAST:event_btneliminarActionPerformed
+
+    private void btnbuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnbuscarActionPerformed
+                                                                              
+    // Obtener el ID del producto desde el campo de texto txtbuscar
+    String idProductoStr = txtbuscar.getText().trim();
+    
+    if (idProductoStr.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Por favor ingrese el ID del producto.");
+        return;
+    }
+
+    // Crear el EntityManagerFactory
+    EntityManagerFactory emf = javax.persistence.Persistence.createEntityManagerFactory("CapaLogica_ventas_jar_1.0-SNAPSHOTPU");
+
+    try {
+        // Crear una instancia del controlador de producto con el EntityManagerFactory
+        ProductoJpaController productoController = new ProductoJpaController(emf);
+
+        // Buscar el producto por su ID
+         Producto producto = productoController.findProducto(idProductoStr);
+
+        if (producto != null) {
+            // Limpiar la tabla antes de agregar el producto
+            DefaultTableModel model = (DefaultTableModel) tablalistado.getModel();
+            model.setRowCount(0); // Limpiar las filas actuales
+
+            // Agregar la información del producto a la tabla
+            model.addRow(new Object[]{
+                producto.getIdproducto(),
+                producto.getSerie(),
+                producto.getNombre(),
+                producto.getPrecCompra(),
+                producto.getPrecVenta(),
+               
+                producto.getCantidad(), // Cantidad (asegúrate de tener este método en la entidad Producto)
+                 producto.getIdcategoria().getIdcategoria() // ID de categoría    
+            });
+        } else {
+            JOptionPane.showMessageDialog(this, "Producto no encontrado.");
+        }
+
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Error al buscar el producto: " + e.getMessage());
+        e.printStackTrace();
+    } finally {
+        // Asegurarse de cerrar el EntityManagerFactory
+        if (emf != null) {
+            emf.close();
+        }
+    }
+
+
+  
+   
+    }//GEN-LAST:event_btnbuscarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -400,11 +544,12 @@ public class frmproducto extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new frmproducto().setVisible(true);
-            }
+      EntityManagerFactory emf = Persistence.createEntityManagerFactory("CapaLogica_ventas_jar_1.0-SNAPSHOTPU");
+
+java.awt.EventQueue.invokeLater(() -> {
+    new frmproducto(emf).setVisible(true); // Pasa el emf aquí
         });
+
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -413,7 +558,6 @@ public class frmproducto extends javax.swing.JFrame {
     private javax.swing.JButton btnguardar;
     private javax.swing.JButton btnnuevo;
     private javax.swing.JButton btnsalir;
-    private javax.swing.JComboBox<String> cbocategoria;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -425,6 +569,7 @@ public class frmproducto extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTextField jTextField1;
     private javax.swing.JTable tablalistado;
     private javax.swing.JTextField txtbuscar;
     private javax.swing.JTextField txtidcategoria;
