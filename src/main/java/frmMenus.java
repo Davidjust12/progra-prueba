@@ -212,7 +212,18 @@ public class frmMenus extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void saveMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveMenuItemActionPerformed
-        // TODO add your handling code here:
+                                                 
+    // Cerrar el JFrame actual (el menú principal)
+    this.dispose(); // Esto cerrará la ventana actual
+
+    // Crear una nueva instancia de frmlogin
+    frmlogin loginForm = new frmlogin();
+    loginForm.setVisible(true); // Hacer visible el formulario de inicio de sesión
+
+    // Si quieres que el formulario de inicio de sesión esté centrado en la pantalla
+    loginForm.setLocationRelativeTo(null);
+
+
     }//GEN-LAST:event_saveMenuItemActionPerformed
 
     private void saveAsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveAsMenuItemActionPerformed

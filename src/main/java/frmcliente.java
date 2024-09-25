@@ -14,6 +14,7 @@ import java.util.UUID;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Query;
+import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import javax.validation.ConstraintViolation;
@@ -28,7 +29,13 @@ import javax.validation.ConstraintViolationException;
  *
  * @author David
  */
-public class frmcliente extends javax.swing.JFrame {
+public class frmcliente extends JInternalFrame {
+    private EntityManagerFactory emf;
+
+    public frmcliente(EntityManagerFactory emf) {
+        this.emf = emf;
+        initComponents(); // Método para inicializar los componentes de la interfaz gráfica
+    }
 
     ClienteJpaController clienteController;
 

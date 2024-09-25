@@ -20,7 +20,7 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author David
  */
-public class frmusuarios extends javax.swing.JFrame {
+public class frmusuarios extends javax.swing.JInternalFrame {
 EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("CapaLogica_ventas_jar_1.0-SNAPSHOTPU");
 
     /**
@@ -156,7 +156,11 @@ EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFacto
 
         jLabel7.setText("Habilitado");
 
-        txtpasword.setText("jPasswordField1");
+        txtpasword.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtpaswordActionPerformed(evt);
+            }
+        });
 
         cboacceso.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Administrador", "Vendedor", "Almacen", " " }));
         cboacceso.addActionListener(new java.awt.event.ActionListener() {
@@ -583,6 +587,10 @@ try {
 
 
     }//GEN-LAST:event_btneliminarActionPerformed
+
+    private void txtpaswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtpaswordActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtpaswordActionPerformed
 
     /**
      * @param args the command line arguments

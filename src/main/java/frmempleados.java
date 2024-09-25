@@ -14,7 +14,15 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author David
  */
-public class frmempleados extends javax.swing.JFrame {
+public class frmempleados extends javax.swing.JInternalFrame {
+    EntityManagerFactory entityManagerFactory;
+
+    public frmempleados(EntityManagerFactory emf) {
+        this.entityManagerFactory = emf;
+        initComponents(); // Inicializa los componentes de tu formulario
+    }
+
+
 
     /**
      * Creates new form frmempleados
@@ -52,6 +60,7 @@ public class frmempleados extends javax.swing.JFrame {
         btnsalir = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         tablalistado = new javax.swing.JTable();
+        btneditar = new javax.swing.JButton();
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -141,6 +150,13 @@ public class frmempleados extends javax.swing.JFrame {
         ));
         jScrollPane2.setViewportView(tablalistado);
 
+        btneditar.setText("Editar");
+        btneditar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btneditarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -170,13 +186,15 @@ public class frmempleados extends javax.swing.JFrame {
                         .addComponent(txtbuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 40, Short.MAX_VALUE)))
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btneliminar)
                     .addComponent(btnnuevo)
                     .addComponent(btnguardar)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(btnbuscar)
                         .addGap(35, 35, 35)
-                        .addComponent(btnsalir, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(btnsalir, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(btneditar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btneliminar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addGap(35, 35, 35))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(115, 115, 115)
@@ -200,16 +218,20 @@ public class frmempleados extends javax.swing.JFrame {
                     .addComponent(jLabel2)
                     .addComponent(txtnombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnguardar))
-                .addGap(22, 22, 22)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(txtapellidos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btneliminar)
-                .addGap(17, 17, 17)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(22, 22, 22)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel3)
+                            .addComponent(txtapellidos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(33, 33, 33)
+                        .addComponent(btneliminar)))
+                .addGap(34, 34, 34)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
-                    .addComponent(txttelefono, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txttelefono, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btneditar))
                 .addGap(34, 34, 34)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
@@ -417,6 +439,72 @@ public class frmempleados extends javax.swing.JFrame {
 
     }//GEN-LAST:event_btnsalirActionPerformed
 
+    private void btneditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btneditarActionPerformed
+                                           
+    // Obtener el ID del empleado desde el campo de texto
+    String idEmpleado = txtbuscar.getText().trim();
+
+    if (idEmpleado.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Por favor, ingrese el ID del empleado para editar.");
+        return;
+    }
+
+    // Crear EntityManagerFactory
+    EntityManagerFactory emf = javax.persistence.Persistence.createEntityManagerFactory("CapaLogica_ventas_jar_1.0-SNAPSHOTPU");
+    
+    try {
+        // Crear controlador de empleado
+        EmpleadosJpaController empleadoController = new EmpleadosJpaController(emf);
+
+        // Buscar el empleado por su ID
+        Empleados empleado = empleadoController.findEmpleados(idEmpleado);
+
+        if (empleado != null) {
+            // Obtener los nuevos valores desde los campos de texto
+            String nuevoNombre = txtnombre.getText().trim();
+            String nuevosApellidos = txtapellidos.getText().trim();
+            String nuevoTelefono = txttelefono.getText().trim();
+
+            // Validar que los campos no estén vacíos antes de actualizar
+            if (nuevoNombre.isEmpty() || nuevosApellidos.isEmpty() || nuevoTelefono.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Por favor, complete todos los campos.");
+                return;
+            }
+
+            // Actualizar los datos del empleado
+            empleado.setNombre(nuevoNombre);
+            empleado.setApellidos(nuevosApellidos);
+            empleado.setTelefono(Integer.parseInt(nuevoTelefono));
+
+            // Guardar los cambios en la base de datos
+            empleadoController.edit(empleado);
+
+            // Mensaje de confirmación
+            JOptionPane.showMessageDialog(this, "Empleado editado exitosamente.");
+
+            // Limpiar los campos de texto después de editar
+            txtnombre.setText("");
+            txtapellidos.setText("");
+            txttelefono.setText("");
+            txtbuscar.setText("");
+        } else {
+            JOptionPane.showMessageDialog(this, "Empleado no encontrado con ese ID.");
+        }
+
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Error al editar el empleado: " + e.getMessage());
+    } finally {
+        // Cerrar el EntityManagerFactory
+        if (emf != null) {
+            emf.close();
+        }
+    }
+
+
+
+
+    }//GEN-LAST:event_btneditarActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -454,6 +542,7 @@ public class frmempleados extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnbuscar;
+    private javax.swing.JButton btneditar;
     private javax.swing.JButton btneliminar;
     private javax.swing.JButton btnguardar;
     private javax.swing.JButton btnnuevo;

@@ -14,13 +14,21 @@ import javax.swing.JOptionPane;
  *
  * @author David
  */
-public class frmcategoria extends javax.swing.JFrame {
+public class frmcategoria extends javax.swing.JInternalFrame {
+    private EntityManagerFactory emf;
+
+    public frmcategoria(EntityManagerFactory emf) {
+        this.emf = emf;
+        initComponents(); // Método para inicializar los componentes de la interfaz gráfica
+    }
 
     /**
      * Creates new form frmcategoria
      */
     public frmcategoria() {
         initComponents();
+        
+
     }
 
     /**

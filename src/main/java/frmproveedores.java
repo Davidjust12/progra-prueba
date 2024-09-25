@@ -3,6 +3,7 @@ import CONTROLADORES.ProveedorJpaController;
 import CapaLogica_ventas.Proveedor;
 import java.util.Random;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import javax.swing.JOptionPane;
@@ -17,8 +18,13 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author David
  */
-public class frmproveedores extends javax.swing.JFrame {
+public class frmproveedores extends javax.swing.JInternalFrame {
+private EntityManagerFactory emf;
 
+    public frmproveedores(EntityManagerFactory emf) {
+        this.emf = emf;
+        initComponents(); // Método para inicializar los componentes de la interfaz gráfica
+    }
     /**
      * Creates new form frmproveedores
      */

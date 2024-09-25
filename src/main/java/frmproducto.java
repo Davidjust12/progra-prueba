@@ -7,6 +7,7 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Random;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -23,7 +24,7 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author David
  */
-public class frmproducto extends javax.swing.JFrame {
+public class frmproducto extends javax.swing.JInternalFrame {
 
    private EntityManagerFactory emf; // Atributo para almacenar el EntityManagerFactory
 
@@ -298,7 +299,7 @@ public frmproducto(EntityManagerFactory emf) {
                             .addComponent(jLabel9))))
                 .addGap(31, 31, 31)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(270, Short.MAX_VALUE))
+                .addContainerGap(150, Short.MAX_VALUE))
         );
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
@@ -311,7 +312,7 @@ public frmproducto(EntityManagerFactory emf) {
             .addGroup(layout.createSequentialGroup()
                 .addGap(33, 33, 33)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(12, Short.MAX_VALUE))
+                .addContainerGap(86, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 232, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -340,8 +341,14 @@ public frmproducto(EntityManagerFactory emf) {
     try {
         // Generar un nuevo ID de producto (ajusta esto según tu lógica)
         // Por ejemplo, puedes usar un método que obtenga el próximo ID disponible
-        String nuevoIdProducto = generarNuevoIdProducto(); // Método que debes implementar
-        txtidproducto.setText(nuevoIdProducto); // Establece el nuevo ID
+        // Dentro del ActionListener del botón "Nuevo" {
+    // Generar un código de cliente aleatorio de 4 dígitos
+    Random random = new Random();
+    int randomId = 1000 + random.nextInt(9000); // Genera un número entre 1000 y 9999
+
+    // Establecer el ID generado en el campo de texto correspondiente
+    txtidproducto.setText(String.valueOf(randomId));
+       
         txtserie.setText("");
         txtproducto.setText("");
         txtpreciocompra.setText("");
