@@ -14,6 +14,7 @@ import java.util.UUID;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Query;
+import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -29,7 +30,7 @@ import javax.validation.ConstraintViolationException;
  *
  * @author David
  */
-public class frmcliente extends JInternalFrame {
+public class frmcliente extends JFrame {
     private EntityManagerFactory emf;
 
     public frmcliente(EntityManagerFactory emf) {
@@ -105,7 +106,7 @@ public class frmcliente extends JInternalFrame {
         ));
         jScrollPane1.setViewportView(jTable1);
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("DATOS DEL CLIENTE "));
         jPanel2.setForeground(new java.awt.Color(102, 255, 204));
@@ -311,18 +312,18 @@ public class frmcliente extends JInternalFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(76, 76, 76)
-                        .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(28, 28, 28)
-                        .addComponent(txtbuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(120, 120, 120)
-                        .addComponent(btnbuscar))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(31, 31, 31)
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(123, 123, 123)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 512, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(76, 76, 76)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 598, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(28, 28, 28)
+                                .addComponent(txtbuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(120, 120, 120)
+                                .addComponent(btnbuscar)))))
                 .addContainerGap(135, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -357,7 +358,7 @@ public class frmcliente extends JInternalFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-private int getNextClientId() {
+private int getNextClienteId() {
     EntityManager em = clienteController.getEntityManager();
     try {
         // Buscar el ID máximo actual
@@ -694,63 +695,53 @@ private int getNextClientId() {
     }//GEN-LAST:event_btnlimpiarActionPerformed
 
     private void btnbuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnbuscarActionPerformed
-      
- 
-    // Obtener el ID del producto desde el campo de texto txtbuscar
-    String idProductoStr = txtbuscar.getText().trim();
+ // Obtener el ID del cliente desde el campo de texto txtbuscar
+String idClienteStr = txtbuscar.getText().trim();
 
-    if (idProductoStr.isEmpty()) {
-        JOptionPane.showMessageDialog(this, "Por favor ingrese el ID del producto.");
-        return;
+if (idClienteStr.isEmpty()) {
+    JOptionPane.showMessageDialog(this, "Por favor ingrese el ID del cliente.");
+    return;
+}
+
+// No es necesario verificar que sea un número porque es un String (ID del cliente es de tipo String)
+
+// Crear el EntityManagerFactory utilizando el nombre de tu unidad de persistencia
+EntityManagerFactory emf = javax.persistence.Persistence.createEntityManagerFactory("CapaLogica_ventas_jar_1.0-SNAPSHOTPU");
+
+try {
+    // Crear una instancia del controlador de cliente con el EntityManagerFactory
+    ClienteJpaController clienteController = new ClienteJpaController(emf);
+
+    // Buscar el cliente por su ID (tipo String)
+    Cliente cliente = clienteController.findCliente(idClienteStr);
+
+    if (cliente != null) {
+        // Limpiar la tabla antes de agregar el cliente
+        DefaultTableModel model = (DefaultTableModel) tablalistado.getModel();
+        model.setRowCount(0); // Limpiar las filas actuales
+
+        // Agregar la información del cliente a la tabla
+        model.addRow(new Object[]{
+            cliente.getIdcliente(),
+            cliente.getNombre(),
+            cliente.getApellido(),
+            cliente.getNit(),
+            cliente.getTelefono(),
+            cliente.getDireccion()
+        });
+    } else {
+        JOptionPane.showMessageDialog(this, "Cliente no encontrado.");
     }
 
-    // Verificar que el ID ingresado sea un número
-    if (!idProductoStr.matches("\\d+")) {
-        JOptionPane.showMessageDialog(this, "El ID del producto debe ser un número.");
-        return;
+} catch (Exception e) {
+    JOptionPane.showMessageDialog(this, "Error al buscar el cliente: " + e.getMessage());
+    e.printStackTrace();
+} finally {
+    // Asegurarse de cerrar el EntityManagerFactory
+    if (emf != null) {
+        emf.close();
     }
-
-    // Crear el EntityManagerFactory utilizando el nombre de tu unidad de persistencia
-    EntityManagerFactory emf = javax.persistence.Persistence.createEntityManagerFactory("CapaLogica_ventas_jar_1.0-SNAPSHOTPU");
-
-    try {
-        // Crear una instancia del controlador de producto con el EntityManagerFactory
-        ProductoJpaController productoController = new ProductoJpaController(emf);
-
-        // Convertir el ID del producto a String, suponiendo que el ID es de tipo String
-        String idProducto = idProductoStr;
-
-        // Buscar el producto por su ID
-        Producto producto = productoController.findProducto(idProducto);
-
-        if (producto != null) {
-            // Limpiar la tabla antes de agregar el producto
-            DefaultTableModel model = (DefaultTableModel) tablalistado.getModel();
-            model.setRowCount(0); // Limpiar las filas actuales
-
-            // Agregar la información del producto a la tabla
-            model.addRow(new Object[]{
-                producto.getIdproducto(),
-                producto.getSerie(),
-                producto.getNombre(),
-                producto.getPrecCompra(),
-                producto.getPrecVenta(),
-                producto.getIdcategoria() // Asegúrate de que este método devuelva lo que necesitas
-            });
-        } else {
-            JOptionPane.showMessageDialog(this, "Producto no encontrado.");
-        }
-
-    } catch (Exception e) {
-        JOptionPane.showMessageDialog(this, "Error al buscar el producto: " + e.getMessage());
-        e.printStackTrace();
-    } finally {
-        // Asegurarse de cerrar el EntityManagerFactory
-        if (emf != null) {
-            emf.close();
-        }
-    }
-
+}
 
 
 
