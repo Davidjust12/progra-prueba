@@ -111,14 +111,7 @@ public void delete(String id) {
     }
 }
 
-    public Cliente find(Object id) {
-        EntityManager em = getEntityManager();
-        try {
-            return em.find(Cliente.class, id);
-        } finally {
-            em.close();
-        }
-    }
+    
 
     public List<Cliente> findAll() {
         EntityManager em = getEntityManager();

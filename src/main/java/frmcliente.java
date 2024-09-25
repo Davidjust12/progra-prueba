@@ -30,26 +30,17 @@ import javax.validation.ConstraintViolationException;
  *
  * @author David
  */
-public class frmcliente extends JFrame {
+public class frmcliente extends javax.swing.JInternalFrame {
     private EntityManagerFactory emf;
+    private ClienteJpaController clienteController;
 
+    // Constructor que recibe el EntityManagerFactory
     public frmcliente(EntityManagerFactory emf) {
+        initComponents();
         this.emf = emf;
-        initComponents(); // Método para inicializar los componentes de la interfaz gráfica
-    }
-
-    ClienteJpaController clienteController;
-
-   public frmcliente() {
-    initComponents();
-    try {
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("CapaLogica_ventas_jar_1.0-SNAPSHOTPU");
-        clienteController = new ClienteJpaController(emf);
+        this.clienteController = new ClienteJpaController(emf); // Inicializa el controlador aquí
         System.out.println("ClienteJpaController creado con éxito");
-    } catch (Exception e) {
-        System.out.println("Error al crear ClienteJpaController: " + e.getMessage());
     }
-}
 
 
     /**
@@ -774,12 +765,15 @@ try {
         }
         //</editor-fold>
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new frmcliente().setVisible(true);
-            }
-        });
+        // En el lugar donde se crea y se muestra el formulario
+java.awt.EventQueue.invokeLater(new Runnable() {
+    public void run() {
+        // Asegúrate de pasar el EntityManagerFactory correcto al crear el formulario
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("CapaLogica_ventas_jar_1.0-SNAPSHOTPU");
+        frmcliente clienteForm = new frmcliente(emf); // Usa el constructor que recibe el emf
+        clienteForm.setVisible(true);
+    }
+});
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

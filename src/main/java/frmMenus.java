@@ -3,6 +3,7 @@ import java.awt.Dimension;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -14,7 +15,7 @@ import javax.swing.JFrame;
  * @author David
  */
 public class frmMenus extends javax.swing.JFrame {
-
+private EntityManagerFactory emf;
     /**
      * Creates new form frmMenus
      */
@@ -26,6 +27,8 @@ public class frmMenus extends javax.swing.JFrame {
         
         // Establecer el tamaño máximo
         setExtendedState(JFrame.MAXIMIZED_BOTH);
+        
+        
         
     }
 
@@ -45,7 +48,7 @@ public class frmMenus extends javax.swing.JFrame {
         saveAsMenuItem = new javax.swing.JMenuItem();
         menualmacen = new javax.swing.JMenu();
         cutMenuItem = new javax.swing.JMenuItem();
-        copyMenuItem = new javax.swing.JMenuItem();
+        menucategorias = new javax.swing.JMenuItem();
         menucompras = new javax.swing.JMenu();
         contentsMenuItem = new javax.swing.JMenuItem();
         aboutMenuItem = new javax.swing.JMenuItem();
@@ -111,14 +114,14 @@ public class frmMenus extends javax.swing.JFrame {
         });
         menualmacen.add(cutMenuItem);
 
-        copyMenuItem.setMnemonic('y');
-        copyMenuItem.setText("Categorias");
-        copyMenuItem.addActionListener(new java.awt.event.ActionListener() {
+        menucategorias.setMnemonic('y');
+        menucategorias.setText("Categorias");
+        menucategorias.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                copyMenuItemActionPerformed(evt);
+                menucategoriasActionPerformed(evt);
             }
         });
-        menualmacen.add(copyMenuItem);
+        menualmacen.add(menucategorias);
 
         menuBar.add(menualmacen);
 
@@ -275,7 +278,7 @@ proveedoresForm.setVisible(true);
         
     }//GEN-LAST:event_cutMenuItemActionPerformed
 
-    private void copyMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_copyMenuItemActionPerformed
+    private void menucategoriasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menucategoriasActionPerformed
      // Crear una instancia de EntityManagerFactory
 EntityManagerFactory emf = Persistence.createEntityManagerFactory("CapaLogica_ventas_jar_1.0-SNAPSHOTPU");
 
@@ -292,10 +295,10 @@ categoriaForm.setVisible(true);
 categoriaForm.setLocation((contenedor.getWidth() - categoriaForm.getWidth()) / 2, 
                            (contenedor.getHeight() - categoriaForm.getHeight()) / 2);
 
-    }//GEN-LAST:event_copyMenuItemActionPerformed
+    }//GEN-LAST:event_menucategoriasActionPerformed
 
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
-       // Crear una instancia de EntityManagerFactory
+    // Crear una instancia de EntityManagerFactory
 EntityManagerFactory emf = Persistence.createEntityManagerFactory("CapaLogica_ventas_jar_1.0-SNAPSHOTPU");
 
 // Crear una nueva instancia de frmcliente con el EntityManagerFactory
@@ -306,8 +309,6 @@ contenedor.add(clienteForm);
 
 // Hacer visible el internal frame
 clienteForm.setVisible(true);
-
-// Centrar el formulario en el contenedor
 
     }//GEN-LAST:event_jMenuItem2ActionPerformed
 
@@ -380,7 +381,6 @@ empleadosForm.setVisible(true);
     private javax.swing.JMenuItem aboutMenuItem;
     private javax.swing.JPanel contenedor;
     private javax.swing.JMenuItem contentsMenuItem;
-    private javax.swing.JMenuItem copyMenuItem;
     private javax.swing.JMenuItem cutMenuItem;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
@@ -393,6 +393,7 @@ empleadosForm.setVisible(true);
     private javax.swing.JMenu menualmacen;
     private javax.swing.JMenu menuarchivo;
     private javax.swing.JMenu menuayuda;
+    private javax.swing.JMenuItem menucategorias;
     private javax.swing.JMenu menucompras;
     private javax.swing.JMenu menuconfiguraciones;
     private javax.swing.JMenu menuconsultas;
