@@ -86,7 +86,7 @@ private EntityManagerFactory emf;
 
         jLabel4.setText("jLabel4");
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jPanel2.setBackground(new java.awt.Color(153, 255, 204));
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("DATOS DEL PROVEEDOR"));
@@ -154,7 +154,7 @@ private EntityManagerFactory emf;
                 {null, null, null}
             },
             new String [] {
-                "ID Proveedor ", "Telefono", "Nombre"
+                "ID Proveedor ", "Nombre", "Telefono"
             }
         ));
         jScrollPane1.setViewportView(tablalistado);
@@ -218,7 +218,7 @@ private EntityManagerFactory emf;
                             .addComponent(btneliminar)
                             .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                 .addComponent(btneditar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(btnnuevo, javax.swing.GroupLayout.DEFAULT_SIZE, 72, Short.MAX_VALUE))))
+                                .addComponent(btnnuevo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(btnguardar)
                         .addGap(4, 4, 4)))
