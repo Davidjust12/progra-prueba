@@ -17,6 +17,7 @@ import javax.persistence.criteria.Root;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.NoResultException;
+import javax.persistence.TypedQuery;
 
 public class UsuariosJpaController implements Serializable {
 
@@ -124,6 +125,24 @@ public class UsuariosJpaController implements Serializable {
         em.close();
     }
 }
+public Usuarios findUserByTrabajadorId(String idTrabajador) {
+    EntityManager em = getEntityManager();
+    try {
+        // Suponiendo que la entidad Usuarios tiene una relación con Empleados y usa el idTrabajador
+        TypedQuery<Usuarios> query = em.createQuery("SELECT u FROM Usuarios u WHERE u.idempleado.idtrabajador = :idTrabajador", Usuarios.class);
+        query.setParameter("idTrabajador", idTrabajador);
+
+        List<Usuarios> resultados = query.getResultList();
+
+        if (!resultados.isEmpty()) {
+            return resultados.get(0); // Devolver el primer usuario encontrado
+        } else {
+            return null;
+        }
+    } finally {
+        em.close();
+    }
+}
 
 
     // Editar un usuario existente
@@ -226,4 +245,4 @@ public class UsuariosJpaController implements Serializable {
             em.close();
         }
     }
-}
+} ......
