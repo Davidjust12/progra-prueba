@@ -6,6 +6,7 @@ package CapaLogica_ventas;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,10 +16,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -36,6 +39,13 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Producto.findByPrecVenta", query = "SELECT p FROM Producto p WHERE p.precVenta = :precVenta"),
     @NamedQuery(name = "Producto.findByCantidad", query = "SELECT p FROM Producto p WHERE p.cantidad = :cantidad")})
 public class Producto implements Serializable {
+
+    @OneToMany(mappedBy = "idproducto", fetch = FetchType.LAZY)
+    private List<DetalleVentas> detalleVentasList;
+
+    @OneToMany(mappedBy = "idproducto", fetch = FetchType.LAZY)
+    private List<DetalleCompras> detalleComprasList;
+    
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -147,6 +157,24 @@ public class Producto implements Serializable {
     @Override
     public String toString() {
         return "CapaLogica_ventas.Producto[ idproducto=" + idproducto + " ]";
+    }
+
+    @XmlTransient
+    public List<DetalleCompras> getDetalleComprasList() {
+        return detalleComprasList;
+    }
+
+    public void setDetalleComprasList(List<DetalleCompras> detalleComprasList) {
+        this.detalleComprasList = detalleComprasList;
+    }
+
+    @XmlTransient
+    public List<DetalleVentas> getDetalleVentasList() {
+        return detalleVentasList;
+    }
+
+    public void setDetalleVentasList(List<DetalleVentas> detalleVentasList) {
+        this.detalleVentasList = detalleVentasList;
     }
     
 }

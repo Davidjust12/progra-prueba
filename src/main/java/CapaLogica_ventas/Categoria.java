@@ -45,7 +45,7 @@ public class Categoria implements Serializable {
     @Column(name = "idcategoria", nullable = false)
     private Integer idcategoria;
     @Size(max = 15)
-    @Column(name = "descrpcion", length = 15)
+    @Column(name = "descrpcion", length = 25)
     private String descrpcion;
 
     public Categoria() {

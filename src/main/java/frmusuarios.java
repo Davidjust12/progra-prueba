@@ -2,7 +2,6 @@
 import CONTROLADORES.exceptions.NonexistentEntityException;
 import CapaLogica_ventas.Empleados;
 import CapaLogica_ventas.Usuarios;
-import static CapaLogica_ventas.Usuarios_.idempleado;
 import controladores.EmpleadosJpaController;
 import controladores.UsuariosJpaController;
 import java.util.List;

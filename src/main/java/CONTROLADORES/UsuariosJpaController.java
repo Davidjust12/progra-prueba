@@ -207,6 +207,29 @@ public Usuarios findUserByTrabajadorId(String idTrabajador) {
             em.close();
         }
     }
+   public Usuarios findUsuarios(Integer idUsuario) {
+    EntityManager em = getEntityManager();
+    try {
+        return em.find(Usuarios.class, idUsuario); // Buscar usuario por ID (tipo Integer)
+    } finally {
+        em.close();
+    }
+}
+public Usuarios findUsuarioByNombre(String nombreUsuario) {
+    EntityManager em = getEntityManager();
+    try {
+        TypedQuery<Usuarios> query = em.createQuery("SELECT u FROM Usuarios u WHERE u.nombreUsuario = :nombreUsuario", Usuarios.class);
+        query.setParameter("nombreUsuario", nombreUsuario);
+        return query.getSingleResult();
+    } catch (NoResultException e) {
+        return null; // No se encontró el usuario
+    } finally {
+        em.close();
+    }
+}
+
+
+
 
     // Listar todos los usuarios
     public List<Usuarios> findUsuariosEntities() {
@@ -245,4 +268,4 @@ public Usuarios findUserByTrabajadorId(String idTrabajador) {
             em.close();
         }
     }
-} ......
+} 

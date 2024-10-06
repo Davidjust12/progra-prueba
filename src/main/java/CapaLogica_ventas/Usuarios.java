@@ -5,6 +5,7 @@
 package CapaLogica_ventas;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,9 +17,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -35,6 +38,12 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Usuarios.findByAcceso", query = "SELECT u FROM Usuarios u WHERE u.acceso = :acceso"),
     @NamedQuery(name = "Usuarios.findByEstado", query = "SELECT u FROM Usuarios u WHERE u.estado = :estado")})
 public class Usuarios implements Serializable {
+
+    @OneToMany(mappedBy = "idusuario", fetch = FetchType.LAZY)
+    private List<Ventas> ventasList;
+
+    @OneToMany(mappedBy = "idusuario", fetch = FetchType.LAZY)
+    private List<Compras> comprasList;
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -136,6 +145,24 @@ public class Usuarios implements Serializable {
     @Override
     public String toString() {
         return "CapaLogica_ventas.Usuarios[ idusuario=" + idusuario + " ]";
+    }
+
+    @XmlTransient
+    public List<Compras> getComprasList() {
+        return comprasList;
+    }
+
+    public void setComprasList(List<Compras> comprasList) {
+        this.comprasList = comprasList;
+    }
+
+    @XmlTransient
+    public List<Ventas> getVentasList() {
+        return ventasList;
+    }
+
+    public void setVentasList(List<Ventas> ventasList) {
+        this.ventasList = ventasList;
     }
     
 }

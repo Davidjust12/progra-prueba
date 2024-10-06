@@ -19,6 +19,10 @@
     <class>CapaLogica_ventas.Producto</class>
     <class>CapaLogica_ventas.Empleados</class>
     <class>CapaLogica_ventas.Usuarios</class>
+    <class>CapaLogica_ventas.Compras</class>
+    <class>CapaLogica_ventas.DetalleCompras</class>
+    <class>CapaLogica_ventas.DetalleVentas</class>
+    <class>CapaLogica_ventas.Ventas</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:sqlserver://localhost:1433;databaseName=data_ventas;user=sa;password=1234;trustServerCertificate=true "/>
       <property name="javax.persistence.jdbc.user" value="usuariosql"/>

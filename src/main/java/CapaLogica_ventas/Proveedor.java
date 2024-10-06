@@ -5,16 +5,20 @@
 package CapaLogica_ventas;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -29,6 +33,9 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Proveedor.findByTelefono", query = "SELECT p FROM Proveedor p WHERE p.telefono = :telefono"),
     @NamedQuery(name = "Proveedor.findByNombre", query = "SELECT p FROM Proveedor p WHERE p.nombre = :nombre")})
 public class Proveedor implements Serializable {
+
+    @OneToMany(mappedBy = "idproveedor", fetch = FetchType.LAZY)
+    private List<Compras> comprasList;
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -98,6 +105,15 @@ public class Proveedor implements Serializable {
     @Override
     public String toString() {
         return "CapaLogica_ventas.Proveedor[ idproveedor=" + idproveedor + " ]";
+    }
+
+    @XmlTransient
+    public List<Compras> getComprasList() {
+        return comprasList;
+    }
+
+    public void setComprasList(List<Compras> comprasList) {
+        this.comprasList = comprasList;
     }
     
 }

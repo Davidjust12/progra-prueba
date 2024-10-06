@@ -5,16 +5,20 @@
 package CapaLogica_ventas;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -34,6 +38,9 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Cliente.findByTelefono", query = "SELECT c FROM Cliente c WHERE c.telefono = :telefono"),
     @NamedQuery(name = "Cliente.findByDireccion", query = "SELECT c FROM Cliente c WHERE c.direccion = :direccion")})
 public class Cliente implements Serializable {
+
+    @OneToMany(mappedBy = "idcliente", fetch = FetchType.LAZY)
+    private List<Ventas> ventasList;
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -135,6 +142,15 @@ public class Cliente implements Serializable {
     @Override
     public String toString() {
         return "com.mycompany.ventas.Cliente[ idcliente=" + idcliente + " ]";
+    }
+
+    @XmlTransient
+    public List<Ventas> getVentasList() {
+        return ventasList;
+    }
+
+    public void setVentasList(List<Ventas> ventasList) {
+        this.ventasList = ventasList;
     }
     
 }

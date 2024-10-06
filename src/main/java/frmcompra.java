@@ -1,11 +1,20 @@
 
+import CONTROLADORES.DetalleComprasJpaController;
 import CONTROLADORES.ProveedorJpaController;
+import CapaLogica_ventas.Compras;
+import CapaLogica_ventas.DetalleCompras;
+import CapaLogica_ventas.Producto;
 import CapaLogica_ventas.Proveedor;
 import CapaLogica_ventas.Usuarios;
+import controladores.ComprasJpaController;
+import controladores.ProductoJpaController;
 import controladores.UsuariosJpaController;
+import java.math.BigDecimal;
+import java.util.Date;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -16,14 +25,22 @@ import javax.swing.JOptionPane;
  *
  * @author David
  */
-public class frmcompra extends javax.swing.JFrame {
+public class frmcompra extends javax.swing.JInternalFrame {
 
     /**
      * Creates new form frmcompra
      */
-    public frmcompra() {
-        initComponents();
-    }
+   private EntityManagerFactory emf;
+
+private EntityManagerFactory entityManagerFactory;
+
+public frmcompra() {
+    initComponents();
+    entityManagerFactory = Persistence.createEntityManagerFactory("CapaLogica_ventas_jar_1.0-SNAPSHOTPU");
+}
+
+
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -40,7 +57,7 @@ public class frmcompra extends javax.swing.JFrame {
         dcfecha = new javax.swing.JTextField();
         jPanel3 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        txttipodocumento = new javax.swing.JTextField();
         jPanel4 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
@@ -65,14 +82,14 @@ public class frmcompra extends javax.swing.JFrame {
         btneliminar = new javax.swing.JButton();
         btnagregar = new javax.swing.JButton();
         jPanel6 = new javax.swing.JPanel();
-        txtnumerocomprobante = new javax.swing.JTextField();
+        txtnumerodocumento = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tablalistado = new javax.swing.JTable();
+        tabladetalle = new javax.swing.JTable();
         btnguardar = new javax.swing.JButton();
         btnsalir = new javax.swing.JButton();
         jLabel11 = new javax.swing.JLabel();
-        txttotalpagar = new javax.swing.JTextField();
+        txttotal = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -111,7 +128,11 @@ public class frmcompra extends javax.swing.JFrame {
 
         jLabel1.setText("Tipo");
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        txttipodocumento.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txttipodocumentoActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -121,8 +142,8 @@ public class frmcompra extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(73, Short.MAX_VALUE))
+                .addComponent(txttipodocumento, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(28, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -130,13 +151,19 @@ public class frmcompra extends javax.swing.JFrame {
                 .addGap(12, 12, 12)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(txttipodocumento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(9, Short.MAX_VALUE))
         );
 
         jLabel3.setText("DATOS DEL PROVEEDOR ");
 
         jLabel4.setText("Proveedor ");
+
+        txtidproveedor.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtidproveedorActionPerformed(evt);
+            }
+        });
 
         txtproveedor.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -145,6 +172,12 @@ public class frmcompra extends javax.swing.JFrame {
         });
 
         jLabel5.setText("Trabajador ");
+
+        txtidempleado.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtidempleadoActionPerformed(evt);
+            }
+        });
 
         txtnombreusuario.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -202,11 +235,12 @@ public class frmcompra extends javax.swing.JFrame {
                 .addGap(21, 21, 21)
                 .addComponent(jLabel3)
                 .addGap(30, 30, 30)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(txtidproveedor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtproveedor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnbuscarproveedor, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(txtidproveedor, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel4)
+                        .addComponent(txtproveedor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnbuscarproveedor, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
@@ -240,6 +274,12 @@ public class frmcompra extends javax.swing.JFrame {
             }
         });
 
+        txtcantidad.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtcantidadActionPerformed(evt);
+            }
+        });
+
         jLabel10.setText("Cantidad");
 
         btnbuscarproducto.setText("....");
@@ -250,6 +290,11 @@ public class frmcompra extends javax.swing.JFrame {
         });
 
         btneliminar.setText("Eliminar");
+        btneliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btneliminarActionPerformed(evt);
+            }
+        });
 
         btnagregar.setText("Agregar");
         btnagregar.addActionListener(new java.awt.event.ActionListener() {
@@ -314,6 +359,12 @@ public class frmcompra extends javax.swing.JFrame {
 
         jPanel6.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "FACTURA DE COMPRA", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 1, 18))); // NOI18N
 
+        txtnumerodocumento.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtnumerodocumentoActionPerformed(evt);
+            }
+        });
+
         jLabel7.setText("NO.");
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
@@ -324,7 +375,7 @@ public class frmcompra extends javax.swing.JFrame {
                 .addContainerGap(12, Short.MAX_VALUE)
                 .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(txtnumerocomprobante, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtnumerodocumento, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(31, 31, 31))
         );
         jPanel6Layout.setVerticalGroup(
@@ -333,11 +384,11 @@ public class frmcompra extends javax.swing.JFrame {
                 .addGap(28, 28, 28)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel7)
-                    .addComponent(txtnumerocomprobante, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtnumerodocumento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(50, Short.MAX_VALUE))
         );
 
-        tablalistado.setModel(new javax.swing.table.DefaultTableModel(
+        tabladetalle.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -348,7 +399,7 @@ public class frmcompra extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane1.setViewportView(tablalistado);
+        jScrollPane1.setViewportView(tabladetalle);
 
         btnguardar.setBackground(new java.awt.Color(51, 255, 255));
         btnguardar.setText("Guardar");
@@ -385,7 +436,7 @@ public class frmcompra extends javax.swing.JFrame {
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(62, 62, 62))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addContainerGap(21, Short.MAX_VALUE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -405,7 +456,7 @@ public class frmcompra extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnsalir)
-                    .addComponent(txttotalpagar, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txttotal, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -435,7 +486,7 @@ public class frmcompra extends javax.swing.JFrame {
                         .addGap(33, 33, 33)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel11)
-                            .addComponent(txttotalpagar, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(txttotal, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 17, Short.MAX_VALUE)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(257, 257, 257))
@@ -445,14 +496,16 @@ public class frmcompra extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(24, 24, 24)
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(0, 12, Short.MAX_VALUE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         pack();
@@ -468,29 +521,38 @@ public class frmcompra extends javax.swing.JFrame {
 
     private void btnbuscarusuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnbuscarusuarioActionPerformed
                                                   
-    String idTrabajador = txtidempleado.getText().trim(); // Obtener el ID del trabajador desde el JTextField
+                                             
+    String idUsuarioStr = txtidempleado.getText().trim(); // Obtener el ID del usuario desde el JTextField
 
-    if (idTrabajador.isEmpty()) {
-        JOptionPane.showMessageDialog(this, "Por favor ingrese un ID de trabajador.");
+    if (idUsuarioStr.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Por favor ingrese un ID de usuario.");
         return;
     }
 
     try {
+        Integer idUsuario = Integer.parseInt(idUsuarioStr); // Convertir el ID a Integer
+        
         // Inicializar el EntityManagerFactory si no lo has hecho aún
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("CapaLogica_ventas_jar_1.0-SNAPSHOTPU");
         UsuariosJpaController usuarioController = new UsuariosJpaController(emf);
 
-        // Busca un usuario basado en el ID de trabajador
-        Usuarios usuario = usuarioController.findUserByTrabajadorId(idTrabajador);
+        // Buscar el usuario por ID
+        Usuarios usuario = usuarioController.findUsuarios(idUsuario);
 
         if (usuario != null) {
             txtnombreusuario.setText(usuario.getUsuario()); // Cargar el nombre de usuario en el JTextField
         } else {
             JOptionPane.showMessageDialog(this, "Usuario no encontrado.");
         }
+    } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(this, "El ID de usuario debe ser un número entero.");
     } catch (Exception e) {
         JOptionPane.showMessageDialog(this, "Error al buscar usuario: " + e.getMessage());
     }
+
+
+
+
 
 
     }//GEN-LAST:event_btnbuscarusuarioActionPerformed
@@ -512,15 +574,166 @@ public class frmcompra extends javax.swing.JFrame {
     }//GEN-LAST:event_txtproductoActionPerformed
 
     private void btnbuscarproductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnbuscarproductoActionPerformed
-        // TODO add your handling code here:
+                                                  
+ 
+    String idProducto = txtidproducto.getText(); // Obtener el ID del producto desde el campo de texto
+
+    // Inicializar EntityManagerFactory si no se ha hecho aún
+    EntityManagerFactory emf = Persistence.createEntityManagerFactory("CapaLogica_ventas_jar_1.0-SNAPSHOTPU");
+    ProductoJpaController productoController = new ProductoJpaController(emf);
+
+    try {
+        // Buscar el producto por ID
+        Producto producto = productoController.findProducto(idProducto);
+
+        if (producto == null) {
+            JOptionPane.showMessageDialog(this, "Producto no encontrado.");
+            txtproducto.setText("");
+        } else {
+            // Mostrar el nombre del producto en el campo txtproducto
+            txtproducto.setText(producto.getNombre());
+        }
+
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Error al buscar el producto: " + e.getMessage());
+    }
+
+
+
     }//GEN-LAST:event_btnbuscarproductoActionPerformed
 
     private void btnagregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnagregarActionPerformed
-        // TODO add your handling code here:
+  
+    String idProducto = txtidproducto.getText(); // Obtener el ID del producto ingresado
+    int cantidad;
+    BigDecimal precioCompra;
+    BigDecimal subtotal;
+
+    // Inicializar EntityManagerFactory si no se ha hecho aún
+    EntityManagerFactory emf = Persistence.createEntityManagerFactory("CapaLogica_ventas_jar_1.0-SNAPSHOTPU");
+    ProductoJpaController productoController = new ProductoJpaController(emf);
+
+    try {
+        // Buscar el producto por ID
+        Producto producto = productoController.findProducto(idProducto);
+
+        if (producto == null) {
+            JOptionPane.showMessageDialog(this, "Producto no encontrado.");
+            return;
+        }
+
+        // Obtener la cantidad y el precio ingresado
+        try {
+            cantidad = Integer.parseInt(txtcantidad.getText());
+            precioCompra = new BigDecimal(txtpreciocompra.getText());
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Por favor, ingrese una cantidad y un precio válidos.");
+            return;
+        }
+
+        // Calcular el subtotal
+        subtotal = precioCompra.multiply(BigDecimal.valueOf(cantidad));
+
+        // Agregar los datos a la tabla
+        DefaultTableModel model = (DefaultTableModel) tabladetalle.getModel();
+        model.addRow(new Object[]{
+            idProducto,
+            producto.getNombre(),
+            cantidad,
+            precioCompra,
+            subtotal
+        });
+
+        // Limpiar los campos de texto relacionados con el producto
+        txtidproducto.setText("");
+        txtproducto.setText("");
+        txtcantidad.setText("");
+        txtpreciocompra.setText("");
+
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Error al agregar el producto: " + e.getMessage());
+    }
+
+
     }//GEN-LAST:event_btnagregarActionPerformed
 
     private void btnguardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnguardarActionPerformed
-        // TODO add your handling code here:
+       
+                                        
+
+    if (entityManagerFactory == null) {
+        entityManagerFactory = Persistence.createEntityManagerFactory("CapaLogica_ventas_jar_1.0-SNAPSHOTPU");
+    }
+
+    // Crear una nueva compra
+    Compras nuevaCompra = new Compras();
+
+    // Obtener el proveedor y el usuario
+    String idProveedor = txtidproveedor.getText().trim();
+    String idUsuario = txtidempleado.getText().trim();
+
+    ProveedorJpaController proveedorController = new ProveedorJpaController(entityManagerFactory);
+    Proveedor proveedor = proveedorController.findProveedor(idProveedor);
+
+    UsuariosJpaController usuariosController = new UsuariosJpaController(entityManagerFactory);
+    
+    if (proveedor == null) {
+        JOptionPane.showMessageDialog(this, "Error: Proveedor no encontrado para ID: " + idProveedor);
+        return;
+    }
+  
+
+    // Asignar valores a la nueva compra
+
+  
+    nuevaCompra.setTipoDocumento(txttipodocumento.getText());
+    nuevaCompra.setNumDocumento(txtnumerodocumento.getText());
+    nuevaCompra.setTotal(new BigDecimal(txttotal.getText()));
+
+    ComprasJpaController comprasController = new ComprasJpaController(entityManagerFactory);
+    try {
+        comprasController.create(nuevaCompra);
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Error al guardar la compra: " + e.getMessage());
+        return;
+    }
+
+    // Guarda los detalles de la compra
+    for (int i = 0; i < tabladetalle.getRowCount(); i++) {
+        DetalleCompras detalle = new DetalleCompras();
+        detalle.setIdcompra(nuevaCompra);
+        detalle.setCantidad(Integer.parseInt(tabladetalle.getValueAt(i, 1).toString()));
+        detalle.setPrecio(new BigDecimal(tabladetalle.getValueAt(i, 2).toString()));
+        detalle.setTotal(new BigDecimal(tabladetalle.getValueAt(i, 3).toString()));
+
+        // Obtener el producto
+        String idProducto = tabladetalle.getValueAt(i, 0).toString();
+        ProductoJpaController productoController = new ProductoJpaController(entityManagerFactory);
+        Producto producto = productoController.findProducto(idProducto);
+
+        if (producto != null) {
+            detalle.setIdproducto(producto);
+        } else {
+            JOptionPane.showMessageDialog(this, "Error: Producto no encontrado para ID: " + idProducto);
+            return;
+        }
+
+        // Guarda cada detalle de la compra
+        DetalleComprasJpaController detalleController = new DetalleComprasJpaController(entityManagerFactory);
+        try {
+            detalleController.create(detalle);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error al guardar el detalle de la compra: " + e.getMessage());
+        }
+    }
+
+    JOptionPane.showMessageDialog(this, "Compra guardada exitosamente.");
+
+
+
+
+
+
     }//GEN-LAST:event_btnguardarActionPerformed
 
     private void btnbuscarproveedorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnbuscarproveedorActionPerformed
@@ -534,11 +747,11 @@ public class frmcompra extends javax.swing.JFrame {
     }
 
     try {
-        // Inicializar el EntityManagerFactory si no lo has hecho aún
+     
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("CapaLogica_ventas_jar_1.0-SNAPSHOTPU");
         ProveedorJpaController proveedorController = new ProveedorJpaController(emf); 
 
-        // Usamos el método 'findProveedor' para buscar por ID
+   
         Proveedor proveedor = proveedorController.findProveedor(idProveedor); 
 
         if (proveedor != null) {
@@ -548,18 +761,63 @@ public class frmcompra extends javax.swing.JFrame {
         }
     } catch (Exception e) {
         JOptionPane.showMessageDialog(this, "Error al buscar proveedor: " + e.getMessage());
+
+
     }
-
-
-
 
 
 
     }//GEN-LAST:event_btnbuscarproveedorActionPerformed
 
     private void btnsalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnsalirActionPerformed
-        // TODO add your handling code here:
+   
+    // Cerrar la ventana actual
+    this.dispose();
+
+
     }//GEN-LAST:event_btnsalirActionPerformed
+
+    private void txtcantidadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtcantidadActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtcantidadActionPerformed
+
+    private void txtidproveedorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtidproveedorActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtidproveedorActionPerformed
+
+    private void txtidempleadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtidempleadoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtidempleadoActionPerformed
+
+    private void btneliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btneliminarActionPerformed
+  
+    // Obtener el índice de la fila seleccionada
+    int filaSeleccionada = tabladetalle.getSelectedRow();
+
+    // Verificar si hay una fila seleccionada
+    if (filaSeleccionada == -1) {
+        JOptionPane.showMessageDialog(this, "Por favor, seleccione un producto para eliminar.");
+        return;
+    }
+
+    // Confirmar la eliminación del producto
+    int confirmacion = JOptionPane.showConfirmDialog(this, "¿Está seguro de que desea eliminar el producto seleccionado?", "Confirmar eliminación", JOptionPane.YES_NO_OPTION);
+    if (confirmacion == JOptionPane.YES_OPTION) {
+        // Eliminar la fila seleccionada del modelo de la tabla
+        DefaultTableModel model = (DefaultTableModel) tabladetalle.getModel();
+        model.removeRow(filaSeleccionada);
+    }
+
+
+    }//GEN-LAST:event_btneliminarActionPerformed
+
+    private void txtnumerodocumentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtnumerodocumentoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtnumerodocumentoActionPerformed
+
+    private void txttipodocumentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txttipodocumentoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txttipodocumentoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -605,7 +863,6 @@ public class frmcompra extends javax.swing.JFrame {
     private javax.swing.JButton btnguardar;
     private javax.swing.JButton btnsalir;
     private javax.swing.JTextField dcfecha;
-    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -625,16 +882,17 @@ public class frmcompra extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel6;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JTable tablalistado;
+    private javax.swing.JTable tabladetalle;
     private javax.swing.JTextField txtcantidad;
     private javax.swing.JTextField txtidempleado;
     private javax.swing.JTextField txtidproducto;
     private javax.swing.JTextField txtidproveedor;
     private javax.swing.JTextField txtnombreusuario;
-    private javax.swing.JTextField txtnumerocomprobante;
+    private javax.swing.JTextField txtnumerodocumento;
     private javax.swing.JTextField txtpreciocompra;
     private javax.swing.JTextField txtproducto;
     private javax.swing.JTextField txtproveedor;
-    private javax.swing.JTextField txttotalpagar;
+    private javax.swing.JTextField txttipodocumento;
+    private javax.swing.JTextField txttotal;
     // End of variables declaration//GEN-END:variables
 }

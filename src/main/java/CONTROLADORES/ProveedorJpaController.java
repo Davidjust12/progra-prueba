@@ -69,6 +69,14 @@ public class ProveedorJpaController {
     }
 }
 
+public Proveedor findProveedor(String id) {
+    EntityManager em = getEntityManager();
+    try {
+        return em.find(Proveedor.class, id); // Busca por ID en la entidad Proveedor
+    } finally {
+        em.close();
+    }
+}
 
     public void destroy(String id) throws Exception {
         EntityManager em = getEntityManager();

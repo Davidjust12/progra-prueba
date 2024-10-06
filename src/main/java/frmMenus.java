@@ -61,8 +61,6 @@ private EntityManagerFactory emf;
         menuconfiguraciones = new javax.swing.JMenu();
         jMenuItem5 = new javax.swing.JMenuItem();
         jMenuItem6 = new javax.swing.JMenuItem();
-        menuayuda = new javax.swing.JMenu();
-        jMenuItem7 = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -130,6 +128,11 @@ private EntityManagerFactory emf;
 
         contentsMenuItem.setMnemonic('c');
         contentsMenuItem.setText("Compras");
+        contentsMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                contentsMenuItemActionPerformed(evt);
+            }
+        });
         menucompras.add(contentsMenuItem);
 
         aboutMenuItem.setMnemonic('a');
@@ -146,6 +149,11 @@ private EntityManagerFactory emf;
         menuventas.setText("Ventas");
 
         jMenuItem1.setText("Ventas");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
         menuventas.add(jMenuItem1);
 
         jMenuItem2.setText("Clientes");
@@ -187,13 +195,6 @@ private EntityManagerFactory emf;
         menuconfiguraciones.add(jMenuItem6);
 
         menuBar.add(menuconfiguraciones);
-
-        menuayuda.setText("Ayuda");
-
-        jMenuItem7.setText("Ayuda");
-        menuayuda.add(jMenuItem7);
-
-        menuBar.add(menuayuda);
 
         setJMenuBar(menuBar);
 
@@ -342,6 +343,35 @@ empleadosForm.setVisible(true);
 
     }//GEN-LAST:event_jMenuItem6ActionPerformed
 
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+ // Crear una instancia de EntityManagerFactory
+EntityManagerFactory emf = Persistence.createEntityManagerFactory("CapaLogica_ventas_jar_1.0-SNAPSHOTPU");
+
+// Crear una nueva instancia de frmventa con el EntityManagerFactory
+frmventa ventaForm = new frmventa(emf);
+
+// Añadir el internal frame al panel contenedor
+contenedor.add(ventaForm);
+
+// Hacer visible el internal frame
+ventaForm.setVisible(true);
+
+
+
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
+
+    private void contentsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_contentsMenuItemActionPerformed
+ // Crear una nueva instancia de frmcompra
+frmcompra compraForm = new frmcompra();
+
+// Añadir el internal frame al panel contenedor
+contenedor.add(compraForm);
+
+// Hacer visible el internal frame
+compraForm.setVisible(true);
+
+    }//GEN-LAST:event_contentsMenuItemActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -388,11 +418,9 @@ empleadosForm.setVisible(true);
     private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JMenuItem jMenuItem5;
     private javax.swing.JMenuItem jMenuItem6;
-    private javax.swing.JMenuItem jMenuItem7;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JMenu menualmacen;
     private javax.swing.JMenu menuarchivo;
-    private javax.swing.JMenu menuayuda;
     private javax.swing.JMenuItem menucategorias;
     private javax.swing.JMenu menucompras;
     private javax.swing.JMenu menuconfiguraciones;
